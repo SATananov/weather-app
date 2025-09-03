@@ -1,4 +1,4 @@
-const API_KEY = "6a0edd89ac8451cfc987fbba3d0feb85"; 
+const API_KEY = "6a0edd89ac8451cfc987fbba3d0feb85"; // OpenWeather API key
 
 const cityInput = document.getElementById("cityInput");
 const getWeatherBtn = document.getElementById("getWeather");
@@ -7,18 +7,17 @@ const cityName = document.getElementById("cityName");
 const temp = document.getElementById("temp");
 const desc = document.getElementById("desc");
 
-// помощен елемент за съобщения
+// етикет за съобщения
 let msg = document.getElementById("msg");
 if (!msg) {
   msg = document.createElement("p");
   msg.id = "msg";
   msg.style.marginTop = "10px";
+  msg.style.color = "#fff";
   result?.parentElement?.appendChild(msg);
 }
 
-function showMessage(text) {
-  msg.textContent = text;
-}
+function showMessage(t) { msg.textContent = t; }
 
 getWeatherBtn.addEventListener("click", async () => {
   const city = cityInput.value.trim();
@@ -31,7 +30,6 @@ getWeatherBtn.addEventListener("click", async () => {
     const res = await fetch(url);
 
     if (!res.ok) {
-      // по-ясни съобщения
       if (res.status === 401) throw new Error("❌ Невалиден или липсващ API ключ (401).");
       if (res.status === 404) throw new Error("❌ Няма такъв град (404).");
       if (res.status === 429) throw new Error("⏳ Прекалено много заявки (429). Опитай пак след малко.");
@@ -39,8 +37,9 @@ getWeatherBtn.addEventListener("click", async () => {
     }
 
     const data = await res.json();
+
     cityName.textContent = `🌍 ${data.name}, ${data.sys?.country || ""}`;
-    temp.textContent = `🌡️ Температура: ${data.main?.temp}°C`;
+    temp.textContent = `🌡️ Температура: ${Math.round(data.main?.temp)}°C`;
     desc.textContent = `☁️ ${data.weather?.[0]?.description || "—"}`;
 
     result.classList.remove("hidden");
